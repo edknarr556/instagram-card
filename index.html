@@ -42,8 +42,20 @@
     <instagram-card data-accent="2" data-primary="17"><div>Sample slot content</div></instagram-card>
     <h2>Property usage</h2>
     <instagram-card id="example" title="Sample property title"></instagram-card>
+    <h2>Image carousel usage</h2>
+    <instagram-card id="carousel" title="My Story"></instagram-card>
   </div>
   <script type="module" src="./instagram-card.js"></script>
+  <script>
+    const carousel = document.querySelector('#carousel');
+    if (carousel) {
+      carousel.images = [
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80'
+      ];
+    }
+  </script>
 
   <!-- Take HAX, the Web and you further down the rabbit hole -->
   <style>
