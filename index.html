@@ -23,11 +23,7 @@
     instagram-card:hover {
       box-shadow: var(--ddd-boxShadow-sm);
     }
-    #example {
-      --instagram-card-font-size: var(--ddd-font-size-l);
-      background-color: var(--ddd-accent-2);
-      color: var(--ddd-primary-17);
-    }
+    
   </style>
   <title>instagram-card</title>
 </head>
@@ -38,22 +34,16 @@
     <!-- this is going to do whatever the tag's defaults are -->
     <h2>Default</h2>
     <instagram-card></instagram-card>
-    <h2>Slot usage</h2>
-    <instagram-card data-accent="2" data-primary="17"><div>Sample slot content</div></instagram-card>
-    <h2>Property usage</h2>
-    <instagram-card id="example" title="Sample property title"></instagram-card>
-    <h2>Image carousel usage</h2>
-    <instagram-card id="carousel" title="My Story"></instagram-card>
   </div>
   <script type="module" src="./instagram-card.js"></script>
   <script>
     const carousel = document.querySelector('#carousel');
     if (carousel) {
-      carousel.images = [
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80'
-      ];
+      carousel.images = [ 
+        "https://e0.365dm.com/16/07/2048x1152/nfl-james-harrison-pittsburg_3749783.jpg",
+      "https://media.gettyimages.com/id/1237041374/photo/pittsburgh-pa-pittsburgh-steelers-quarterback-ben-roethlisberger-looks-down-field-for-a.jpg?s=612x612&w=gi&k=20&c=L-GhXp-X6hlpr3IDWk1QmJqGh5YrNzP2mroC7Ncby1A=",
+
+           ];
     }
   </script>
 

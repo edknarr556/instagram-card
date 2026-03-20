@@ -5,7 +5,7 @@
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
-
+import "./dot-indicator.js";
 /**
  * `instagram-card`
  * 
@@ -22,15 +22,15 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
     super();
     this.title = "";
     this.images = [
-      "https://images.unsplash.com/photo-1523301343968-5f1c9a7a32c9?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80",
-    ];
+      "https://e0.365dm.com/16/07/2048x1152/nfl-james-harrison-pittsburg_3749783.jpg",
+      "https://media.gettyimages.com/id/1237041374/photo/pittsburgh-pa-pittsburgh-steelers-quarterback-ben-roethlisberger-looks-down-field-for-a.jpg?s=612x612&w=gi&k=20&c=L-GhXp-X6hlpr3IDWk1QmJqGh5YrNzP2mroC7Ncby1A=",
+      
+    ]
     this.currentIndex = 0;
     this.t = this.t || {};
     this.t = {
       ...this.t,
-      title: "Title",
+      title: "Username",
       previous: "Previous",
       next: "Next",
     };
@@ -44,19 +44,21 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
 
   // Lit reactive properties
   static get properties() {
-    return {
-      ...super.properties,
-      title: { type: String },
-      images: { type: Array },
-      currentIndex: { type: Number },
-    };
-  }
-
+  return {
+    title: { type: String },
+    images: { type: Array },
+    currentIndex: { type: Number },
+    loading: { type: Boolean },
+  };
+}
   updated(changedProperties) {
-    if (changedProperties.has("images") && (!this.currentIndex || this.currentIndex >= this.images.length)) {
-      this.currentIndex = 0;
-    }
+  if (
+    changedProperties.has("images") &&
+    (!this.images?.length || this.currentIndex >= this.images.length)
+  ) {
+    this.currentIndex = 0;
   }
+}
 
   _previousImage() {
     if (!this.images?.length) return;
@@ -147,17 +149,8 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
         justify-content: center;
         gap: var(--ddd-spacing-1);
       }
-      .dot {
-        width: 0.6rem;
-        height: 0.6rem;
-        border-radius: 50%;
-        border: 1px solid var(--ddd-theme-primary);
-        background: transparent;
-        cursor: pointer;
-      }
-      .dot.active {
-        background: var(--ddd-theme-primary);
-      }
+      
+  
       .image-count {
         margin-top: var(--ddd-spacing-2);
         font-size: var(--ddd-font-size-xs);
@@ -178,12 +171,12 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
   <div class="carousel" @pointerdown="${this._onPointerDown}" @pointerup="${this._onPointerUp}">
     <img src="${image}" alt="${this.title || "Instagram"} image ${this.currentIndex + 1}" loading="lazy" />
     <div class="controls">
-      <button class="control-button" @click="${this._previousImage}" aria-label="${this.t.previous}">❮</button>
-      <button class="control-button" @click="${this._nextImage}" aria-label="${this.t.next}">❯</button>
+      <dot-indicators
+  .count="${this.images.length}"
+  .current="${this.currentIndex}"
+  @dot-click="${(e) => this._setImage(e.detail)}"
+></dot-indicators>
     </div>
-  </div>
-  <div class="indicator-row">
-    ${this.images?.map((_, idx) => html`<button class="dot ${idx === this.currentIndex ? "active" : ""}" @click="${() => this._setImage(idx)}" aria-label="Go to image ${idx + 1}"></button>`)}
   </div>
   <div class="image-count">
     ${this.currentIndex + 1} / ${this.images.length}
