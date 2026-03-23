@@ -9,17 +9,17 @@
   },
   {
     "id": 2,
-    "title": "Campus View",
+    "title": "QB1",
     "username": "elijah_knarr",
     "image": "https://media.gettyimages.com/id/1237041374/photo/pittsburgh-pa-pittsburgh-steelers-quarterback-ben-roethlisberger-looks-down-field-for-a.jpg?s=612x612&w=gi&k=20&c=L-GhXp-X6hlpr3IDWk1QmJqGh5YrNzP2mroC7Ncby1A=",
-    "caption": "Walking to class.",
-    "alt": "Campus building"
+    "caption": "QB1.",
+    "alt": "Ben Roethlisberger throwing a pass"
   },
   {
     "id": 3,
-    "title": "Tech Setup",
+    "title": "Le'von Bell",
     "username": "elijah_knarr",
-     "image":"https://tse3.mm.bing.net/th/id/OIP.t8g6U9_QseZwEJF8k5FvYAHaE9?rs=1&pid=ImgDetMain&o=7&rm=3",        "caption": "Working on the project.",
-    "alt": "Laptop on a desk"
+     "image":"https://tse3.mm.bing.net/th/id/OIP.t8g6U9_QseZwEJF8k5FvYAHaE9?rs=1&pid=ImgDetMain&o=7&rm=3",        "caption": "Le'von Bell.",
+    "alt": "Le'von Bell running with the ball"
   }
 ]
