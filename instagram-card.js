@@ -13,17 +13,19 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
   }
 
   static get properties() {
-    return {
-      items: { type: Array },
-      currentIndex: { type: Number },
-      loading: { type: Boolean },
-      error: { type: String },
-    };
-  }
+  return {
+    posts: { type: Array },
+    authors: { type: Array },
+    currentIndex: { type: Number },
+    loading: { type: Boolean },
+    error: { type: String },
+  };
+}
 
   constructor() {
     super();
-    this.items = [];
+    this.posts = [];
+this.authors = [];
     this.currentIndex = 0;
     this.loading = false;
     this.error = "";
@@ -53,8 +55,9 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
       }
 
       const data = await response.json();
-      this.items = data;
-      this.currentIndex = 0;
+this.posts = data.posts || [];
+this.authors = data.authors || [];
+this.currentIndex = 0;
     } catch (e) {
       this.error = "Could not load JSON data.";
       this.items = [];
@@ -63,22 +66,51 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
 
     this.loading = false;
   }
+_previousImage() {
+  if (!this.posts?.length) return;
+  this.currentIndex =
+    (this.currentIndex - 1 + this.posts.length) % this.posts.length;
+}
 
-  _previousImage() {
-    if (!this.items?.length) return;
-    this.currentIndex =
-      (this.currentIndex - 1 + this.items.length) % this.items.length;
+_nextImage() {
+  if (!this.posts?.length) return;
+  this.currentIndex = (this.currentIndex + 1) % this.posts.length;
+}
+
+_setImage(index) {
+  if (!this.posts?.length) return;
+  this.currentIndex = index;
+}
+
+toggleLike() {
+  const post = this.posts?.[this.currentIndex];
+  if (!post) return;
+
+  post.liked = !post.liked;
+  this.requestUpdate();
+}
+
+addComment() {
+  const comment = prompt("Enter a comment:");
+  if (!comment) return;
+
+  const post = this.posts?.[this.currentIndex];
+  if (!post) return;
+
+  if (!post.comments) {
+    post.comments = [];
   }
 
-  _nextImage() {
-    if (!this.items?.length) return;
-    this.currentIndex = (this.currentIndex + 1) % this.items.length;
-  }
+  post.comments = [...post.comments, comment];
+  this.requestUpdate();
+}
 
-  _setImage(index) {
-    if (!this.items?.length) return;
-    this.currentIndex = index;
-  }
+sharePost() {
+  const post = this.posts?.[this.currentIndex];
+  if (!post) return;
+
+  alert(`Shared: ${post.title}`);
+}
 
   _onPointerDown(event) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -165,72 +197,104 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
           font-size: var(--ddd-font-size-xs);
           color: var(--ddd-theme-secondary);
         }
+        .author-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
       `,
     ];
   }
 
   render() {
-    const item = this.items?.[this.currentIndex];
+  const post = this.posts?.[this.currentIndex];
+  const author = this.authors?.find(
+    (a) => a.authorID === post?.authorID
+  );
 
-    return html`
-      <div class="wrapper">
-        ${this.loading
-          ? html`<p>Loading posts...</p>`
-          : this.error
-            ? html`<p>${this.error}</p>`
-            : item
-              ? html`
-                  <h3><span>User:</span> ${item.username}</h3>
-
-                  <div
-                    class="carousel"
-                    @pointerdown="${this._onPointerDown}"
-                    @pointerup="${this._onPointerUp}"
-                  >
-                    <img
-                      src="${item.image}"
-                      alt="${item.alt}"
-                      loading="lazy"
-                    />
-
-                    <div class="controls">
-                      <button
-                        class="control-button"
-                        @click="${this._previousImage}"
-                        aria-label="${this.t.previous}"
-                      >
-                        ❮
-                      </button>
-                      <button
-                        class="control-button"
-                        @click="${this._nextImage}"
-                        aria-label="${this.t.next}"
-                      >
-                        ❯
-                      </button>
-                    </div>
+  return html`
+    <div class="wrapper">
+      ${this.loading
+        ? html`<p>Loading posts...</p>`
+        : this.error
+          ? html`<p>${this.error}</p>`
+          : post && author
+            ? html`
+                <div class="author-row">
+                  <img class="profile" src="${author.profileImg}" />
+                  <div>
+                    <strong>${author.username}</strong><br />
+                    <small>${author.channel}</small>
                   </div>
+                </div>
 
-                  <dot-indicators
-                    .count="${this.items.length}"
-                    .current="${this.currentIndex}"
-                    @dot-click="${(e) => this._setImage(e.detail)}"
-                  ></dot-indicators>
+                <div
+                  class="carousel"
+                  @pointerdown="${this._onPointerDown}"
+                  @pointerup="${this._onPointerUp}"
+                >
+                  <img
+                    src="${post.image}"
+                    alt="${post.alt}"
+                    loading="lazy"
+                  />
 
-                  <div class="post-info">
-                    <h4>${item.title}</h4>
-                    <p>${item.caption}</p>
+                  <div class="controls">
+                    <button
+                      class="control-button"
+                      @click="${this._previousImage}"
+                    >
+                      ❮
+                    </button>
+                    <button
+                      class="control-button"
+                      @click="${this._nextImage}"
+                    >
+                      ❯
+                    </button>
                   </div>
+                </div>
 
-                  <div class="image-count">
-                    ${this.currentIndex + 1} / ${this.items.length}
-                  </div>
-                `
-              : html`<p>No items found.</p>`}
-      </div>
-    `;
-  }
+                <dot-indicators
+                  .count="${this.posts.length}"
+                  .current="${this.currentIndex}"
+                  @dot-click="${(e) => this._setImage(e.detail)}"
+                ></dot-indicators>
+                <div class="action-row">
+  <button class="action-button" @click="${this.toggleLike}">
+    ${post.liked ? "❤️ Like" : "🤍 Like"}
+  </button>
 
+  <button class="action-button" @click="${this.addComment}">
+    💬 Comment
+  </button>
+
+  <button class="action-button" @click="${this.sharePost}">
+    📤 Share
+  </button>
+</div>
+
+                <div class="post-info">
+                  <h4>${post.title}</h4>
+                  <p>${post.caption}</p>
+                </div>
+
+                <div class="image-count">
+                  ${this.currentIndex + 1} / ${this.posts.length}
+                </div>
+              `
+            : html`<p>No posts found.</p>`}
+    </div>
+  `;
+}
   static get haxProperties() {
     return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
       .href;
