@@ -274,11 +274,11 @@ sharePost() {
   </button>
 
   <button class="action-button" @click="${this.addComment}">
-    💬 Comment
+     Comment
   </button>
 
   <button class="action-button" @click="${this.sharePost}">
-    📤 Share
+    Share
   </button>
 </div>
 

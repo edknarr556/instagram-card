@@ -1,9 +1,10 @@
+
 {
-  "authors": [
+    "authors": [
     {
       "authorID": 1,
       "username": "elijah_knarr",
-      "profileImg": "https://via.placeholder.com/50",
+      "profileImg": "https://yt3.googleusercontent.com/9F29S4hVL_lbGKf3TYCRATs5oEY_wrXo6Z3cgqFnGcFhuMqEG5boI5J75vKInyF30MtL0kk1sg=s900-c-k-c0x00ffffff-no-rj",
       "userSince": "2026",
       "channel": "Steelers Fan Page"
     }
@@ -20,18 +21,75 @@
     {
       "postID": 2,
       "authorID": 1,
-      "title": "QB1",
+      "title": "Steelers Game Day",
       "image": "https://media.gettyimages.com/id/1237041374/photo/pittsburgh-pa-pittsburgh-steelers-quarterback-ben-roethlisberger-looks-down-field-for-a.jpg?s=612x612&w=gi&k=20&c=L-GhXp-X6hlpr3IDWk1QmJqGh5YrNzP2mroC7Ncby1A=",
-      "caption": "QB1.",
+      "caption": "Game day energy.",
       "alt": "Ben Roethlisberger throwing a pass"
     },
     {
       "postID": 3,
       "authorID": 1,
-      "title": "Le'Veon Bell",
+      "title": "Steelers Game Day",
       "image": "https://tse3.mm.bing.net/th/id/OIP.t8g6U9_QseZwEJF8k5FvYAHaE9?rs=1&pid=ImgDetMain&o=7&rm=3",
-      "caption": "Le'Veon Bell.",
+      "caption": "Game day energy.",
       "alt": "Le'Veon Bell running with the ball"
+
+    },
+    {
+    "postID": 4,
+      "authorID": 1,
+      "title": "Steelers Game Day",
+      "image": "https://e00-marca.uecdn.es/assets/multimedia/imagenes/2023/05/20/16845620362500.jpg",
+      "caption": "Game day energy.",
+      "alt": "Antonio Brown catching a pass"
+    },
+      {
+    "pos`tID": 5,
+      "authorID": 1,
+      "title": "Steelers Game Day",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmj7sSi_uPNuyBug4ZBYfKZOV-R3FH-Nw3Mg&s",
+      "caption": "Game day energy.",
+      "alt": "Antonio Brown catching a pass"
+    },
+      {
+    "postID": 6,
+      "authorID": 1,
+      "title": "Steelers Game Day",
+      "image": "https://images2.minutemediacdn.com/image/upload/c_crop,x_1154,y_277,w_5497,h_3092/c_fill,w_720,ar_16:9,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/all_steelers/01k8y3h4ecngwp63phkc.jpg",
+      "caption": "Game day energy.",
+      "alt": "Antonio Brown catching a pass"
+    },
+      {
+    "postID": 7,
+      "authorID": 1,
+      "title": "Steelers Game Day",
+      "image": "https://static.clubs.nfl.com/image/upload/t_person_squared_mobile/f_png/v1749650074/steelers/vgsqx5el0iinquytagme.png",
+      "caption": "Game day energy.",
+      "alt": "Antonio Brown catching a pass"
+    },
+      {
+    "postID": 8,
+      "authorID": 1,      
+      "title": "Steelers Game Day",
+      "image": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_375,w_2320,h_1305/c_fill,w_720,ar_16:9,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/all_steelers/01hy3a35y61yaenp4vc6.jpg",
+      "caption": "Game day energy.",      
+      "alt": "Antonio Brown catching a pass"
+    },
+      {
+    "postID": 9,
+      "authorID": 1,      
+      "title": "Steelers Game Day",
+      "image": "https://www.sportsnet.ca/wp-content/uploads/2023/12/TJ-Watt-768x432.jpg",
+      "caption": "Game day energy.",      
+      "alt": "Antonio Brown catching a pass"
+    },
+      {
+    "postID": 10,
+      "authorID": 1,      
+      "title": "Steelers Game Day",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRW_-gfg0zY5E8QkG1DKiWeYjuaNxKESE_Aqw&sv",
+      "caption": "Game day energy.",      
+      "alt": "Antonio Brown catching a pass"
     }
   ]
 }
