@@ -7,6 +7,7 @@ import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 import "./dot-indicators.js";
 
+
 export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
   static get tag() {
     return "instagram-card";
@@ -60,7 +61,8 @@ this.authors = data.authors || [];
 this.currentIndex = 0;
     } catch (e) {
       this.error = "Could not load JSON data.";
-      this.items = [];
+      this.posts = [];
+this.authors = [];
       console.error(e);
     }
 
@@ -87,6 +89,13 @@ toggleLike() {
   if (!post) return;
 
   post.liked = !post.liked;
+
+  // save to localStorage
+  localStorage.setItem(
+    "liked-" + post.postID,
+    post.liked ? "true" : "false"
+  );
+
   this.requestUpdate();
 }
 
@@ -102,7 +111,29 @@ addComment() {
   }
 
   post.comments = [...post.comments, comment];
+
+  // save comments to localStorage
+  localStorage.setItem(
+    "comments-" + post.postID,
+    JSON.stringify(post.comments)
+  );
+
   this.requestUpdate();
+}
+
+updated(changedProperties) {
+  if (changedProperties.has("currentIndex")) {
+    const post = this.posts?.[this.currentIndex];
+    if (!post) return;
+
+    // load like state
+    const liked = localStorage.getItem("liked-" + post.postID);
+    post.liked = liked === "true";
+
+    // load comments
+    const comments = localStorage.getItem("comments-" + post.postID);
+    post.comments = comments ? JSON.parse(comments) : [];
+  }
 }
 
 sharePost() {
@@ -283,10 +314,20 @@ sharePost() {
 </div>
 
                 <div class="post-info">
-                  <h4>${post.title}</h4>
-                  <p>${post.caption}</p>
-                </div>
+  <h4>${post.title}</h4>
+  <p>${post.caption}</p>
 
+  ${post.comments?.length
+    ? html`
+        <div class="comments">
+          <strong>Comments:</strong>
+          ${post.comments.map(
+            (comment) => html`<p class="comment">• ${comment}</p>`
+          )}
+        </div>
+      `
+    : ""}
+</div>
                 <div class="image-count">
                   ${this.currentIndex + 1} / ${this.posts.length}
                 </div>
