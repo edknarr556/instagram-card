@@ -180,34 +180,48 @@ sharePost() {
         max-width: 430px;
       }
 
+      .author-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .profile {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex: 0 0 40px;
+      }
+
       .carousel {
         width: 100%;
         aspect-ratio: 4 / 5;
         overflow: hidden;
         border-radius: 12px;
         background: #eee;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         position: relative;
       }
 
       .carousel img {
         width: 100%;
         height: 100%;
+        display: block;
         object-fit: cover;
       }
 
       .controls {
         position: absolute;
         top: 50%;
+        left: 0;
         width: 100%;
         transform: translateY(-50%);
         display: flex;
         justify-content: space-between;
-        pointer-events: none;
         padding: 0 8px;
         box-sizing: border-box;
+        pointer-events: none;
       }
 
       .control-button {
@@ -222,28 +236,45 @@ sharePost() {
         cursor: pointer;
       }
 
+      .action-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        margin-bottom: 10px;
+      }
+
+      .action-button {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font: inherit;
+        padding: 6px 0;
+      }
+
       .post-info {
         margin-top: 12px;
+      }
+
+      .post-info h3 {
+        margin: 0 0 6px 0;
+      }
+
+      .post-info p {
+        margin: 0 0 8px 0;
+      }
+
+      .comments {
+        margin-top: 10px;
+      }
+
+      .comment {
+        margin: 4px 0;
       }
 
       .image-count {
         margin-top: var(--ddd-spacing-2);
         font-size: var(--ddd-font-size-xs);
         color: var(--ddd-theme-secondary);
-      }
-
-      .author-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-
-      .profile {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
       }
     `,
   ];
@@ -281,7 +312,9 @@ sharePost() {
                   <img
                     src="${post.image}"
                     alt="${post.alt}"
-                    loading="lazy"
+                    loading="eager"
+                    decoding="async"
+                    fetchpriority="high"
                   />
 
                   <div class="controls">
@@ -323,7 +356,7 @@ sharePost() {
                 ></dot-indicators>
 
                 <div class="post-info">
-                  <h4>${post.title}</h4>
+                  <h3>${post.title}</h3>
                   <p>${post.caption}</p>
 
                   ${post.comments?.length
