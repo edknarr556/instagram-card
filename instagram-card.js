@@ -164,92 +164,94 @@ sharePost() {
   }
 
   static get styles() {
-    return [
-      super.styles,
-      css`
-        :host {
-          display: block;
-          color: var(--ddd-theme-primary);
-          background-color: var(--ddd-theme-accent);
-          font-family: var(--ddd-font-navigation);
-        }
+  return [
+    super.styles,
+    css`
+      :host {
+        display: block;
+        color: var(--ddd-theme-primary);
+        background-color: var(--ddd-theme-accent);
+        font-family: var(--ddd-font-navigation);
+      }
 
-        .wrapper {
-          margin: var(--ddd-spacing-2);
-          padding: var(--ddd-spacing-4);
-        }
+      .wrapper {
+        margin: var(--ddd-spacing-2) auto;
+        padding: var(--ddd-spacing-4);
+        max-width: 430px;
+      }
 
-        .carousel {
-          width: 100%;
-          height: 500px;
-          overflow: hidden;
-          border-radius: 12px;
-          background: #eee;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-        }
+      .carousel {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
 
-        .carousel img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+      .carousel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-        .controls {
-          position: absolute;
-          top: 50%;
-          width: 100%;
-          transform: translateY(-50%);
-          display: flex;
-          justify-content: space-between;
-          pointer-events: none;
-        }
+      .controls {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
 
-        .control-button {
-          pointer-events: all;
-          background-color: rgba(0, 0, 0, 0.48);
-          border: none;
-          color: white;
-          font-size: var(--ddd-font-size-xl);
-          width: 2.2rem;
-          height: 2.2rem;
-          border-radius: 50%;
-          cursor: pointer;
-        }
+      .control-button {
+        pointer-events: all;
+        background-color: rgba(0, 0, 0, 0.48);
+        border: none;
+        color: white;
+        font-size: var(--ddd-font-size-xl);
+        width: 2.2rem;
+        height: 2.2rem;
+        border-radius: 50%;
+        cursor: pointer;
+      }
 
-        .post-info {
-          margin-top: 12px;
-        }
+      .post-info {
+        margin-top: 12px;
+      }
 
-        .image-count {
-          margin-top: var(--ddd-spacing-2);
-          font-size: var(--ddd-font-size-xs);
-          color: var(--ddd-theme-secondary);
-        }
-        .author-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+      .image-count {
+        margin-top: var(--ddd-spacing-2);
+        font-size: var(--ddd-font-size-xs);
+        color: var(--ddd-theme-secondary);
+      }
+
+      .author-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .profile {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    `,
+  ];
 }
 
-.profile {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-      `,
-    ];
-  }
-
-  render() {
+   render() {
   const post = this.posts?.[this.currentIndex];
-  const author = this.authors?.find(
-    (a) => a.authorID === post?.authorID
-  );
+  const author = this.authors?.find((a) => a.authorID === post?.authorID);
 
   return html`
     <div class="wrapper">
@@ -260,7 +262,11 @@ sharePost() {
           : post && author
             ? html`
                 <div class="author-row">
-                  <img class="profile" src="${author.profileImg}" />
+                  <img
+                    class="profile"
+                    src="${author.profileImg}"
+                    alt="${author.username} profile picture"
+                  />
                   <div>
                     <strong>${author.username}</strong><br />
                     <small>${author.channel}</small>
@@ -282,16 +288,32 @@ sharePost() {
                     <button
                       class="control-button"
                       @click="${this._previousImage}"
+                      aria-label="Previous post"
                     >
                       ❮
                     </button>
                     <button
                       class="control-button"
                       @click="${this._nextImage}"
+                      aria-label="Next post"
                     >
                       ❯
                     </button>
                   </div>
+                </div>
+
+                <div class="action-row">
+                  <button class="action-button" @click="${this.toggleLike}">
+                    ${post.liked ? "❤️ Like" : "🤍 Like"}
+                  </button>
+
+                  <button class="action-button" @click="${this.addComment}">
+                    Comment
+                  </button>
+
+                  <button class="action-button" @click="${this.sharePost}">
+                    Share
+                  </button>
                 </div>
 
                 <dot-indicators
@@ -299,35 +321,24 @@ sharePost() {
                   .current="${this.currentIndex}"
                   @dot-click="${(e) => this._setImage(e.detail)}"
                 ></dot-indicators>
-                <div class="action-row">
-  <button class="action-button" @click="${this.toggleLike}">
-    ${post.liked ? "❤️ Like" : "🤍 Like"}
-  </button>
-
-  <button class="action-button" @click="${this.addComment}">
-     Comment
-  </button>
-
-  <button class="action-button" @click="${this.sharePost}">
-    Share
-  </button>
-</div>
 
                 <div class="post-info">
-  <h4>${post.title}</h4>
-  <p>${post.caption}</p>
+                  <h4>${post.title}</h4>
+                  <p>${post.caption}</p>
 
-  ${post.comments?.length
-    ? html`
-        <div class="comments">
-          <strong>Comments:</strong>
-          ${post.comments.map(
-            (comment) => html`<p class="comment">• ${comment}</p>`
-          )}
-        </div>
-      `
-    : ""}
-</div>
+                  ${post.comments?.length
+                    ? html`
+                        <div class="comments">
+                          <strong>Comments:</strong>
+                          ${post.comments.map(
+                            (comment) =>
+                              html`<p class="comment">• ${comment}</p>`
+                          )}
+                        </div>
+                      `
+                    : ""}
+                </div>
+
                 <div class="image-count">
                   ${this.currentIndex + 1} / ${this.posts.length}
                 </div>
