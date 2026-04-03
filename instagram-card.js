@@ -24,64 +24,110 @@ export class InstagramCard extends DDDSuper(I18NMixin(LitElement)) {
 }
 
   constructor() {
-    super();
-    this.posts = [];
-this.authors = [];
-    this.currentIndex = 0;
-    this.loading = false;
-    this.error = "";
+  super();
+  this.posts = [];
+  this.authors = [];
+  this.currentIndex = 0;
+  this.loading = false;
+  this.error = "";
+  this._touchStartX = 0;
 
-    this.t = this.t || {};
-    this.t = {
-      ...this.t,
-      title: "Instagram Card",
-      previous: "Previous",
-      next: "Next",
-    };
+  this.t = this.t || {};
+  this.t = {
+    ...this.t,
+    title: "Instagram Card",
+    previous: "Previous",
+    next: "Next",
+  };
+}
+
+connectedCallback() {
+  super.connectedCallback();
+  window.addEventListener("popstate", this._handlePopState);
+  this.loadData();
+}
+
+disconnectedCallback() {
+  window.removeEventListener("popstate", this._handlePopState);
+  super.disconnectedCallback();
+}
+
+_handlePopState = () => {
+  const params = new URLSearchParams(window.location.search);
+  const index = Number(params.get("activeIndex"));
+  if (!Number.isNaN(index) && this.posts?.length) {
+    this.currentIndex = Math.max(0, Math.min(index, this.posts.length - 1));
   }
+};
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.loadData();
-  }
+async loadData() {
+  this.loading = true;
+  this.error = "";
 
-  async loadData() {
-    this.loading = true;
-    this.error = "";
+  try {
 
-    try {
-      const response = await fetch(new URL("./data.json", import.meta.url));
-      if (!response.ok) {
-        throw new Error("Failed to load JSON data");
-      }
-
-      const data = await response.json();
-this.posts = data.posts || [];
-this.authors = data.authors || [];
-this.currentIndex = 0;
-    } catch (e) {
-      this.error = "Could not load JSON data.";
-      this.posts = [];
-this.authors = [];
-      console.error(e);
+    const response = await fetch("/api/posts");
+//const response = await fetch(new URL("./data.json", import.meta.url));    if (!response.ok) {
+      throw new Error("Failed to load JSON data");
     }
 
-    this.loading = false;
+    const data = await response.json();
+    this.posts = data.posts || [];
+    this.authors = data.authors || [];
+
+    const params = new URLSearchParams(window.location.search);
+    const index = Number(params.get("activeIndex"));
+    if (!Number.isNaN(index) && this.posts.length) {
+      this.currentIndex = Math.max(0, Math.min(index, this.posts.length - 1));
+    } else {
+      this.currentIndex = 0;
+    }
+
+    this._loadLikeState();
+  } catch (e) {
+    this.error = "Could not load JSON data.";
+    this.posts = [];
+    this.authors = [];
+    console.error(e);
   }
+
+  this.loading = false;
+}
+
+_updateRoute() {
+  const url = new URL(window.location.href);
+  url.searchParams.set("activeIndex", this.currentIndex);
+  window.history.replaceState({}, "", url);
+}
+
+_loadLikeState() {
+  const post = this.posts?.[this.currentIndex];
+  if (!post) return;
+
+  const liked = localStorage.getItem("liked-" + post.postID);
+  post.liked = liked === "true";
+}
+
 _previousImage() {
   if (!this.posts?.length) return;
   this.currentIndex =
     (this.currentIndex - 1 + this.posts.length) % this.posts.length;
+  this._loadLikeState();
+  this._updateRoute();
 }
 
 _nextImage() {
   if (!this.posts?.length) return;
   this.currentIndex = (this.currentIndex + 1) % this.posts.length;
+  this._loadLikeState();
+  this._updateRoute();
 }
 
 _setImage(index) {
   if (!this.posts?.length) return;
   this.currentIndex = index;
+  this._loadLikeState();
+  this._updateRoute();
 }
 
 toggleLike() {
@@ -89,80 +135,48 @@ toggleLike() {
   if (!post) return;
 
   post.liked = !post.liked;
-
-  // save to localStorage
-  localStorage.setItem(
-    "liked-" + post.postID,
-    post.liked ? "true" : "false"
-  );
-
+  localStorage.setItem("liked-" + post.postID, post.liked ? "true" : "false");
   this.requestUpdate();
-}
-
-addComment() {
-  const comment = prompt("Enter a comment:");
-  if (!comment) return;
-
-  const post = this.posts?.[this.currentIndex];
-  if (!post) return;
-
-  if (!post.comments) {
-    post.comments = [];
-  }
-
-  post.comments = [...post.comments, comment];
-
-  // save comments to localStorage
-  localStorage.setItem(
-    "comments-" + post.postID,
-    JSON.stringify(post.comments)
-  );
-
-  this.requestUpdate();
-}
-
-updated(changedProperties) {
-  if (changedProperties.has("currentIndex")) {
-    const post = this.posts?.[this.currentIndex];
-    if (!post) return;
-
-    // load like state
-    const liked = localStorage.getItem("liked-" + post.postID);
-    post.liked = liked === "true";
-
-    // load comments
-    const comments = localStorage.getItem("comments-" + post.postID);
-    post.comments = comments ? JSON.parse(comments) : [];
-  }
 }
 
 sharePost() {
   const post = this.posts?.[this.currentIndex];
   if (!post) return;
 
-  alert(`Shared: ${post.title}`);
+  const shareUrl = new URL(window.location.href);
+  shareUrl.searchParams.set("activeIndex", this.currentIndex);
+
+  if (navigator.share) {
+    navigator.share({
+      title: post.title,
+      text: post.caption,
+      url: shareUrl.toString(),
+    });
+  } else {
+    navigator.clipboard.writeText(shareUrl.toString());
+    alert("Link copied to clipboard");
+  }
 }
 
-  _onPointerDown(event) {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-    this._touchStartX = event.clientX;
-  }
+_onPointerDown(event) {
+  if (event.pointerType === "mouse" && event.button !== 0) return;
+  this._touchStartX = event.clientX;
+}
 
-  _onPointerUp(event) {
-    if (typeof this._touchStartX !== "number") return;
-    const delta = event.clientX - this._touchStartX;
+_onPointerUp(event) {
+  if (typeof this._touchStartX !== "number") return;
+  const delta = event.clientX - this._touchStartX;
 
-    if (Math.abs(delta) > 40) {
-      if (delta < 0) {
-        this._nextImage();
-      } else {
-        this._previousImage();
-      }
+  if (Math.abs(delta) > 40) {
+    if (delta < 0) {
+      this._nextImage();
+    } else {
+      this._previousImage();
     }
-
-    this._touchStartX = undefined;
   }
 
+  this._touchStartX = undefined;
+}
   static get styles() {
   return [
     super.styles,
@@ -173,6 +187,20 @@ sharePost() {
         background-color: var(--ddd-theme-accent);
         font-family: var(--ddd-font-navigation);
       }
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    color: white;
+    background-color: #111;
+  }
+
+  .action-button,
+  .image-count,
+  .post-info,
+  .author-row small {
+    color: white;
+  }
+}
 
       .wrapper {
         margin: var(--ddd-spacing-2) auto;
@@ -300,7 +328,7 @@ sharePost() {
                   />
                   <div>
                     <strong>${author.username}</strong><br />
-                    <small>${author.channel}</small>
+                    <small>${author.channel} • User since ${author.userSince}</small>
                   </div>
                 </div>
 
@@ -340,10 +368,6 @@ sharePost() {
                     ${post.liked ? "❤️ Like" : "🤍 Like"}
                   </button>
 
-                  <button class="action-button" @click="${this.addComment}">
-                    Comment
-                  </button>
-
                   <button class="action-button" @click="${this.sharePost}">
                     Share
                   </button>
@@ -358,17 +382,8 @@ sharePost() {
                 <div class="post-info">
                   <h3>${post.title}</h3>
                   <p>${post.caption}</p>
-
-                  ${post.comments?.length
-                    ? html`
-                        <div class="comments">
-                          <strong>Comments:</strong>
-                          ${post.comments.map(
-                            (comment) =>
-                              html`<p class="comment">• ${comment}</p>`
-                          )}
-                        </div>
-                      `
+                  ${post.dateTaken
+                    ? html`<small>Date taken: ${post.dateTaken}</small>`
                     : ""}
                 </div>
 
